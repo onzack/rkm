@@ -2,4 +2,4 @@
 2. Make sure to add the needed Kubernetes secrets for the Sentry mission control like this:
 kubectl create secret generic sentry-secrets --from-literal=INFLUXDB_USER=<user> --from-literal=INFLUXDB_PW=<password> -n <sentry-namespace>
 For example:
-kubectl create secret generic sentry-secrets --from-literal=INFLUXDB_USER=foo --from-literal=INFLUXDB_PW=bar -n sentry
+kubectl create secret generic sentry-secrets --from-literal=INFLUXDB_USER=foo --from-literal=INFLUXDB_PW=bar -n sentry-outpost

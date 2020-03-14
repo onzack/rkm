@@ -4,7 +4,7 @@
 
 image:
   repository: quay.io/dmlabs/sentry
-  tag: latest
+  tag: v0.0.1
   pullPolicy: IfNotPresent
 
 clusterInformation:

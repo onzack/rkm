@@ -25,37 +25,37 @@ fi
 if [[ -z $CLUSTER_NAME ]]
   then
     echo "ERROR - CLUSTER_NAME environment variable is not set" > $ERRORLOGTARGET
-    exit 0
+    exit 1
 fi
 
 if [[ -z $INFLUXDB_URL ]]
   then
     echo "ERROR - INFLUXDB_URL environment variable is not set" > $ERRORLOGTARGET
-    exit 0
+    exit 1
 fi
 
 if [[ -z $INFLUXDB_PORT ]]
   then
     echo "ERROR - INFLUXDB_PORT environment variable is not set" > $ERRORLOGTARGET
-    exit 0
+    exit 1
 fi
 
 if [[ -z $INFLUXDB_NAME ]]
   then
     echo "ERROR - INFLUXDB_NAME environment variable is not set" > $ERRORLOGTARGET
-    exit 0
+    exit 1
 fi
 
 if [[ -z $INFLUXDB_USER ]]
   then
     echo "ERROR - INFLUXDB_USER environment variable is not set" > $ERRORLOGTARGET
-    exit 0
+    exit 1
 fi
 
 if [[ -z $INFLUXDB_PW ]]
   then
     echo "ERROR - INFLUXDB_PW environment variable is not set" > $ERRORLOGTARGET
-    exit 0
+    exit 1
 fi
 
 # Define global varialbes
@@ -190,7 +190,7 @@ curl -i -XPOST "$INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME&u=$INFLUXDB
 if (( $? != "0" ))
   then
     echo "ERROR - uploading to Sentry mission control not successful" > $ERRORLOGTARGET
-    exit 0
+    exit 1
   else
     echo "OK - uploading to Sentry mission control successful" > $OKLOGTARGET
 fi
