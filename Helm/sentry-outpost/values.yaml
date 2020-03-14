@@ -1,0 +1,25 @@
+# Default values for kube-guard.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  repository: quay.io/dmlabs/sentry
+  tag: latest
+  pullPolicy: IfNotPresent
+
+clusterInformation:
+  # Kubernetes cluster information for sentry to collect the correct metrics
+  clusterName: dmlabs-apps-prod
+  kubeAPIServerPort: 6443
+  tz: Europe/Zurich
+
+sentryOutpost:
+  schedule: "*/1 * * * *"
+
+sentryMissionControl:
+  # InfluxDB URL and InfluxDB Name of the Sentry mission control
+  # NOTE: This chart expects InfluxDB with authentication and you need to create a Kubernetes secret with that information
+  # -> kubectl create secret generic sentry-secrets --from-literal=INFLUXDB_USER=<user> --from-literal=INFLUXDB_PW=<password> -n <sentry-namespace>
+  influxDBUrl: http://influxdb.apps.dmlabs.ch
+  influxDBPort: 80
+  influxDBName: sentry

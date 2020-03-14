@@ -1,0 +1,73 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  labels:
+    app: sentry
+    role: outpost
+  name: sentry-outpost
+spec:
+  schedule: {{ .Values.sentryOutpost.schedule | quote }}
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  concurrencyPolicy: Replace
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: sentry
+            role: outpost
+        spec:
+          securityContext:
+            runAsUser: 10000
+            runAsGroup: 10000
+            fsGroup: 10000
+          containers:
+          - name: sentry-outpost
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+            imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+            env:
+              - name: TZ
+                valueFrom:
+                  configMapKeyRef:
+                    name: sentry-config
+                    key: TZ
+              - name: CLUSTER_NAME
+                valueFrom:
+                  configMapKeyRef:
+                    name: sentry-config
+                    key: CLUSTER_NAME
+              - name: INFLUXDB_URL
+                valueFrom:
+                  configMapKeyRef:
+                    name: sentry-config
+                    key: INFLUXDB_URL
+              - name: INFLUXDB_PORT
+                valueFrom:
+                  configMapKeyRef:
+                    name: sentry-config
+                    key: INFLUXDB_PORT
+              - name: INFLUXDB_NAME
+                valueFrom:
+                  configMapKeyRef:
+                    name: sentry-config
+                    key: INFLUXDB_NAME
+              - name: INFLUXDB_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: sentry-secrets
+                    key: INFLUXDB_USER
+              - name: INFLUXDB_PW
+                valueFrom:
+                  secretKeyRef:
+                    name: sentry-secrets
+                    key: INFLUXDB_PW
+            resources:
+              requests:
+                memory: "45Mi"
+                cpu: "15m"
+              limits:
+                memory: "80Mi"
+                cpu: "1000m"
+          restartPolicy: OnFailure
+          serviceAccountName: sentry-outpost

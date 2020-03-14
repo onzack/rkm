@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sentry-config
+data:
+  TZ: {{ .Values.clusterInformation.tz }}
+  CLUSTER_NAME: {{ .Values.clusterInformation.clusterName }}
+  INFLUXDB_URL: {{ .Values.sentryMissionControl.influxDBUrl | quote }}
+  INFLUXDB_PORT: {{ .Values.sentryMissionControl.influxDBPort | quote }}
+  INFLUXDB_NAME: {{ .Values.sentryMissionControl.influxDBName }}

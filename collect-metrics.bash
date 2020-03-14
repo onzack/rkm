@@ -1,6 +1,62 @@
 #!/bin/bash
 
+# Prerequisites
+# This script needs this environment variables to be set
+# - CLUSTER_NAME
+# - INFLUXDB_URL
+# - INFLUXDB_PORT
+# - INFLUXDB_NAME
+# - INFLUXDB_USER
+# - INFLUXDB_PW
+
 STARTTIME=$(date +%s.%N)
+
+# Define varialbes for log output
+if [ -f /var/run/secrets/kubernetes.io/serviceaccount/ca.crt ]
+  then
+    OKLOGTARGET="/proc/1/fd/1"
+    ERRORLOGTARGET="/proc/1/fd/2"
+  else
+    OKLOGTARGET="/dev/stdout"
+    ERRORLOGTARGET="/dev/stderr"
+fi
+
+# Check environment variables
+if [[ -z $CLUSTER_NAME ]]
+  then
+    echo "ERROR - CLUSTER_NAME environment variable is not set" > $ERRORLOGTARGET
+    exit 0
+fi
+
+if [[ -z $INFLUXDB_URL ]]
+  then
+    echo "ERROR - INFLUXDB_URL environment variable is not set" > $ERRORLOGTARGET
+    exit 0
+fi
+
+if [[ -z $INFLUXDB_PORT ]]
+  then
+    echo "ERROR - INFLUXDB_PORT environment variable is not set" > $ERRORLOGTARGET
+    exit 0
+fi
+
+if [[ -z $INFLUXDB_NAME ]]
+  then
+    echo "ERROR - INFLUXDB_NAME environment variable is not set" > $ERRORLOGTARGET
+    exit 0
+fi
+
+if [[ -z $INFLUXDB_USER ]]
+  then
+    echo "ERROR - INFLUXDB_USER environment variable is not set" > $ERRORLOGTARGET
+    exit 0
+fi
+
+if [[ -z $INFLUXDB_PW ]]
+  then
+    echo "ERROR - INFLUXDB_PW environment variable is not set" > $ERRORLOGTARGET
+    exit 0
+fi
 
 # Define global varialbes
 TEMPFILEPATH="/tmp"
@@ -41,6 +97,8 @@ if [ -f $ENDPOINTSFILE ]
   then
     rm $ENDPOINTSFILE
 fi
+
+echo "OK - preflight checks successful, start collecting metrics" > $OKLOGTARGET
 
 # Actual script
 kubectl get endpoints -n default kubernetes >> /dev/null
@@ -125,6 +183,16 @@ echo "sentry_apiserver_endpoints_total,cluster=$CLUSTER_NAME value=$ENDPOINTSCOU
 ECHO_OVERALL_STATUS
 ECHO_DURATION
 
-curl -i -XPOST "$INFLUXDB_URL/write?db=$INFLUXDB_NAME&u=$INFLUXDB_USER&p=$INFLUXDB_PW" --data-binary @$METRICSFILE
+echo "OK - collecting metrics successful, start uploading to Sentry mission control: $INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME" > $OKLOGTARGET
+
+curl -i -XPOST "$INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME&u=$INFLUXDB_USER&p=$INFLUXDB_PW" --data-binary @$METRICSFILE
+
+if (( $? != "0" ))
+  then
+    echo "ERROR - uploading to Sentry mission control not successful" > $ERRORLOGTARGET
+    exit 0
+  else
+    echo "OK - uploading to Sentry mission control successful" > $OKLOGTARGET
+fi
 
 exit 0
