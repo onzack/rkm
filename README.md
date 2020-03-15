@@ -1,5 +1,13 @@
 # Sentry
-Simple monitoring tool for remote Kubernetes clusters
+Simple monitoring tool for local and remote Kubernetes clusters.  
+Used technonlogies:
+* Docker
+* Bash
+* InfluxDB
+* Grafana
+
+# Architecture
+![A Sample Graph for visualization ](https://github.com/dmlabs/Sentry/blob/master/Docs/Sentry.png)
 
 # Licence
 Copyright 2020 dmlabs
