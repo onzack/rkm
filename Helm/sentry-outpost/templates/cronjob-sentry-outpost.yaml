@@ -28,7 +28,7 @@ spec:
             imagePullPolicy: "{{ .Values.image.pullPolicy }}"
             securityContext:
              allowPrivilegeEscalation: false
-             readOnlyRootFilesystem: true
+             #readOnlyRootFilesystem: true
              capabilities:
                drop:
                 - ALL
