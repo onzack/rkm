@@ -26,6 +26,12 @@ spec:
           - name: sentry-outpost
             image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
             imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+            securityContext:
+             allowPrivilegeEscalation: false
+             readOnlyRootFilesystem: true
+             capabilities:
+               drop:
+                - ALL
             env:
               - name: TZ
                 valueFrom:
