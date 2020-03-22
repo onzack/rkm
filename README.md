@@ -10,7 +10,7 @@ Used technonlogies:
 ![A Sample Graph for visualization ](https://github.com/dmlabs/Sentry/blob/master/Docs/Sentry.png)
 
 # Grafana Dashbaord
-![Grafana Dashboard ](https://github.com/dmlabs/Sentry/blob/master/Docs/sentry-grafana-dashboard.png)
+![Grafana Dashboard ](https://github.com/dmlabs/Sentry/blob/master/Docs/sentry-grafana.png)
 
 # Licence
 Copyright 2020 dmlabs

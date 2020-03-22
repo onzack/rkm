@@ -9,7 +9,7 @@ image:
 
 clusterInformation:
   # Kubernetes cluster information for sentry to collect the correct metrics
-  clusterName: dmlabs-apps-prod
+  clusterName: kubernetes-cluster-1
   kubeAPIServerPort: 6443
   tz: Europe/Zurich
 
