@@ -1,4 +1,4 @@
-# Sentry
+# RKM - Remote Kubernetes Monitoring
 Simple monitoring tool for local and remote Kubernetes clusters.  
 Used technonlogies:
 * Docker
@@ -7,7 +7,7 @@ Used technonlogies:
 * Grafana
 
 # Architecture
-![A Sample Graph for visualization ](https://github.com/dmlabs/Sentry/blob/master/Docs/Sentry.png)
+![A Sample Graph for visualization ](https://github.com/dmlabs/Sentry/blob/master/Docs/rkm.png)
 
 # Grafana Dashbaord
 ![Grafana Dashboard ](https://github.com/dmlabs/Sentry/blob/master/Docs/sentry-grafana.png)
