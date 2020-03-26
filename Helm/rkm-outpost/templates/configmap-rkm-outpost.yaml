@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: sentry-config
+  name: rkm-config
 data:
   TZ: {{ .Values.clusterInformation.tz }}
   CLUSTER_NAME: {{ .Values.clusterInformation.clusterName }}

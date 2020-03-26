@@ -1,11 +1,11 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: netpol-sentry
+  name: netpol-rkm
 spec:
   podSelector:
     matchLabels:
-      app: sentry
+      app: rkm
   policyTypes:
   - Ingress
   - Egress
