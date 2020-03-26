@@ -2,9 +2,9 @@ apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   labels:
-    app: sentry
+    app: rkm
     role: outpost
-  name: sentry-outpost
+  name: rkm-outpost
 spec:
   schedule: {{ .Values.sentryOutpost.schedule | quote }}
   successfulJobsHistoryLimit: 2
@@ -15,7 +15,7 @@ spec:
       template:
         metadata:
           labels:
-            app: sentry
+            app: rkm
             role: outpost
         spec:
           securityContext:
@@ -23,7 +23,7 @@ spec:
             runAsGroup: 10000
             fsGroup: 10000
           containers:
-          - name: sentry-outpost
+          - name: rkm-outpost
             image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
             imagePullPolicy: "{{ .Values.image.pullPolicy }}"
             securityContext:
@@ -36,38 +36,40 @@ spec:
               - name: TZ
                 valueFrom:
                   configMapKeyRef:
-                    name: sentry-config
+                    name: rkm-config
                     key: TZ
               - name: CLUSTER_NAME
                 valueFrom:
                   configMapKeyRef:
-                    name: sentry-config
+                    name: rkm-config
                     key: CLUSTER_NAME
               - name: INFLUXDB_URL
                 valueFrom:
                   configMapKeyRef:
-                    name: sentry-config
+                    name: rkm-config
                     key: INFLUXDB_URL
               - name: INFLUXDB_PORT
                 valueFrom:
                   configMapKeyRef:
-                    name: sentry-config
+                    name: rkm-config
                     key: INFLUXDB_PORT
               - name: INFLUXDB_NAME
                 valueFrom:
                   configMapKeyRef:
-                    name: sentry-config
+                    name: rkm-config
                     key: INFLUXDB_NAME
               - name: INFLUXDB_USER
                 valueFrom:
                   secretKeyRef:
-                    name: sentry-secrets
+                    name: rkm-secrets
                     key: INFLUXDB_USER
               - name: INFLUXDB_PW
                 valueFrom:
                   secretKeyRef:
-                    name: sentry-secrets
+                    name: rkm-secrets
                     key: INFLUXDB_PW
+              - name: VERBOSE
+                value: "false"
             resources:
               requests:
                 memory: "45Mi"
@@ -76,4 +78,4 @@ spec:
                 memory: "80Mi"
                 cpu: "1000m"
           restartPolicy: OnFailure
-          serviceAccountName: sentry-outpost
+          serviceAccountName: rkm-outpost

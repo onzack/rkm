@@ -8,6 +8,7 @@
 # - INFLUXDB_NAME
 # - INFLUXDB_USER
 # - INFLUXDB_PW
+# - VERBOSE
 
 STARTTIME=$(date +%s.%N)
 
@@ -58,6 +59,12 @@ if [[ -z $INFLUXDB_PW ]]
     exit 1
 fi
 
+if [[ -z $VERBOSE ]]
+  then
+    echo "INFO - VERBOSE environment variable is not set, Use VERBOSE=false as default" > $OKLOGTARGET
+    VERBOSE="false"
+fi
+
 # Define global varialbes
 TEMPFILEPATH="/tmp"
 METRICSFILE="$TEMPFILEPATH/metrics.txt"
@@ -70,11 +77,11 @@ KUBEGUARD_OVERALL_STATUS="1"
 ECHO_DURATION () {
   ENDTIME=$(date +%s.%N)
   DURATION=$(echo "$ENDTIME - $STARTTIME" | bc -l | sed -e 's/^\./0./')
-  echo "sentry_script_duration_seconds,cluster=$CLUSTER_NAME value=$DURATION" >> $METRICSFILE
+  echo "rkm_script_duration_seconds,cluster=$CLUSTER_NAME value=$DURATION" >> $METRICSFILE
 }
 
 ECHO_OVERALL_STATUS () {
-  echo "sentry_overall_health,cluster=$CLUSTER_NAME value=$KUBEGUARD_OVERALL_STATUS" >> $METRICSFILE
+  echo "rkm_overall_health,cluster=$CLUSTER_NAME value=$KUBEGUARD_OVERALL_STATUS" >> $METRICSFILE
 }
 
 # Remove old temporary files, it they are still present
@@ -104,13 +111,13 @@ echo "OK - preflight checks successful, start collecting metrics" > $OKLOGTARGET
 kubectl get endpoints -n default kubernetes >> /dev/null
 if (( $? != "0" ))
   then
-    echo "sentry_kubeapiserver_health,cluster=$CLUSTER_NAME value=0" >> $METRICSFILE
+    echo "rkm_kubeapiserver_health,cluster=$CLUSTER_NAME value=0" >> $METRICSFILE
     KUBEGUARD_OVERALL_STATUS="0"
     ECHO_OVERALL_STATUS
     ECHO_DURATION
     exit 0
   else
-    echo "sentry_kubeapiserver_health,cluster=$CLUSTER_NAME value=1" >> $METRICSFILE
+    echo "rkm_kubeapiserver_health,cluster=$CLUSTER_NAME value=1" >> $METRICSFILE
 fi
 
 kubectl get componentstatuses -o json >> $COMPONENTSTATUSESFILE
@@ -128,10 +135,10 @@ while (( $i < $COMPONENTSLENGTH ))
     COMPONENTSTATUS=$(jq ".items[$i].conditions[0].status" $COMPONENTSTATUSESFILE | tr -d '"')
     if [ $COMPONENTSTATUS == "True" ]
       then
-        echo "sentry_component_health,cluster=$CLUSTER_NAME,component=$COMPONENTNAME value=1" >> $METRICSFILE
+        echo "rkm_component_health,cluster=$CLUSTER_NAME,component=$COMPONENTNAME value=1" >> $METRICSFILE
       else
         KUBEGUARD_OVERALL_STATUS="0"
-        echo "sentry_component_health,cluster=$CLUSTER_NAME,component=$COMPONENTNAME value=0" >> $METRICSFILE
+        echo "rkm_component_health,cluster=$CLUSTER_NAME,component=$COMPONENTNAME value=0" >> $METRICSFILE
     fi
   i=$(($i + 1))
 done
@@ -156,18 +163,18 @@ while (( $i < $NODESLENGTH ))
             if [ $CONDITIONSTATUS != "True" ]
               then
                 KUBEGUARD_OVERALL_STATUS="0"
-                echo "sentry_node_conditiontype_health,cluster=$CLUSTER_NAME,node=$NODENAME,condition=$CONDITIONTYPE value=0" >> $METRICSFILE
+                echo "rkm_node_conditiontype_health,cluster=$CLUSTER_NAME,node=$NODENAME,condition=$CONDITIONTYPE value=0" >> $METRICSFILE
               else
-                echo "sentry_node_conditiontype_health,cluster=$CLUSTER_NAME,node=$NODENAME,condition=$CONDITIONTYPE value=1" >> $METRICSFILE
+                echo "rkm_node_conditiontype_health,cluster=$CLUSTER_NAME,node=$NODENAME,condition=$CONDITIONTYPE value=1" >> $METRICSFILE
             fi
           ;;
           *)
             if [ $CONDITIONSTATUS != "False" ]
               then
                 KUBEGUARD_OVERALL_STATUS="0"
-                echo "sentry_node_conditiontype_health,cluster=$CLUSTER_NAME,node=$NODENAME,condition=$CONDITIONTYPE value=0" >> $METRICSFILE
+                echo "rkm_node_conditiontype_health,cluster=$CLUSTER_NAME,node=$NODENAME,condition=$CONDITIONTYPE value=0" >> $METRICSFILE
               else
-                echo "sentry_node_conditiontype_health,cluster=$CLUSTER_NAME,node=$NODENAME,condition=$CONDITIONTYPE value=1" >> $METRICSFILE
+                echo "rkm_node_conditiontype_health,cluster=$CLUSTER_NAME,node=$NODENAME,condition=$CONDITIONTYPE value=1" >> $METRICSFILE
             fi
           ;;
         esac
@@ -178,21 +185,27 @@ done
 
 ENDPOINTSCOUNT="0"
 ENDPOINTSCOUNT=$(jq '.subsets[0].addresses | length' $ENDPOINTSFILE)
-echo "sentry_apiserver_endpoints_total,cluster=$CLUSTER_NAME value=$ENDPOINTSCOUNT" >> $METRICSFILE
+echo "rkm_apiserver_endpoints_total,cluster=$CLUSTER_NAME value=$ENDPOINTSCOUNT" >> $METRICSFILE
 
 ECHO_OVERALL_STATUS
 ECHO_DURATION
 
-echo "OK - collecting metrics successful, start uploading to Sentry mission control: $INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME" > $OKLOGTARGET
+echo "OK - collecting metrics successful, start uploading to RKM mission control: $INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME" > $OKLOGTARGET
+
+if [ $VERBOSE == "true" ]
+  then
+    echo "Print Metricsfile as VERBOSE=true"
+    cat $METRICSFILE > $OKLOGTARGET
+fi
 
 curl -i -XPOST "$INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME&u=$INFLUXDB_USER&p=$INFLUXDB_PW" --data-binary @$METRICSFILE
 
 if (( $? != "0" ))
   then
-    echo "ERROR - uploading to Sentry mission control not successful" > $ERRORLOGTARGET
+    echo "ERROR - uploading to RKM mission control not successful" > $ERRORLOGTARGET
     exit 1
   else
-    echo "OK - uploading to Sentry mission control successful" > $OKLOGTARGET
+    echo "OK - uploading to RKM mission control successful" > $OKLOGTARGET
 fi
 
 exit 0

@@ -14,7 +14,7 @@ clusterInformation:
   tz: Europe/Zurich
 
 sentryOutpost:
-  schedule: "*/1 * * * *"
+  schedule: "* * * * *"
 
 sentryMissionControl:
   # InfluxDB URL and InfluxDB Name of the Sentry mission control
@@ -22,4 +22,4 @@ sentryMissionControl:
   # -> kubectl create secret generic sentry-secrets --from-literal=INFLUXDB_USER=<user> --from-literal=INFLUXDB_PW=<password> -n <sentry-namespace>
   influxDBUrl: http://influxdb.apps.dmlabs.ch
   influxDBPort: 80
-  influxDBName: sentry
+  influxDBName: rkm
