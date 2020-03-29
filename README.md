@@ -12,6 +12,31 @@ Used technonlogies:
 # Grafana Dashbaord
 ![Grafana Dashboard ](https://github.com/dmlabs/Sentry/blob/master/Docs/sentry-grafana.png)
 
+# Installation
+
+## RKM Mission Control
+
+### Install InfluxDB
+Install InfluxDB with the [InfluxDB Helm Chart](https://github.com/influxdata/helm-charts/tree/master/charts/influxdb)
+
+### Install Grafana
+Install Grafana with the [Grafana Helm Chart](https://github.com/helm/charts/tree/master/stable/grafana)  
+Import the [RKM MIssion Control Dashboard](https://github.com/dmlabs/Sentry/blob/master/Grafana/rkm-mission-control-dashboard.json)
+
+## RKM Outpost
+Install RKM Outpost Helm Chart:  
+1. Create rkm-outpost namespace:  
+`kubectl create namespace rkm-outpost`
+2. Create secret for InfluxDB authentication:  
+`kubectl create secret generic rkm-secrets --from-literal=INFLUXDB_USER=<user> --from-literal=INFLUXDB_PW=<password> -n rkm-outpost`
+3. Clone this repository:  
+`git clone https://github.com/dmlabs/rkm.git`
+4. Adjust values.yaml file:  
+`cp ./rkm/Helm/rkm-outpost/values.yaml ./custom-values.yaml`  
+`vim ./custom-values.yaml`
+5. Install Helm Chart:  
+`helm install -f custom-values.yaml -n rkm-outpost rkm-outpost ./rkm/Helm/rkm-outpost`
+
 # Licence
 Copyright 2020 dmlabs
 
