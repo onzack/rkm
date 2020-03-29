@@ -1,3 +1,5 @@
+[![pipeline status](https://gitlab.dropdown.ch/dmlabs/rkm-build/badges/master/pipeline.svg)](https://gitlab.dropdown.ch/dmlabs/rkm-build/-/commits/master)
+
 # RKM - Remote Kubernetes Monitoring
 Simple monitoring tool for local and remote Kubernetes clusters.  
 Used technonlogies:
