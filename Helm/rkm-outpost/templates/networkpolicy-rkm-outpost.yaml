@@ -7,7 +7,6 @@ spec:
   podSelector:
     matchLabels:
       app: rkm
-      role: outpost
   policyTypes:
   - Ingress
   - Egress
@@ -17,4 +16,4 @@ spec:
     - protocol: TCP
       port: {{ .Values.clusterInformation.kubeAPIServerPort }}
     - protocol: TCP
-      port: {{ .Values.sentryMissionControl.influxDBPort }}
+      port: {{ .Values.rkmMissionControl.influxDBPort }}

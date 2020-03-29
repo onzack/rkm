@@ -1,7 +1,3 @@
-### Build status
-rkm-outpost: [![Docker Repository on Quay](https://quay.io/repository/dmlabs/rkm-outpost/status "Docker Repository on Quay")](https://quay.io/repository/dmlabs/rkm-outpost)  
-rkm-outpost-operator: [![Docker Repository on Quay](https://quay.io/repository/dmlabs/rkm-outpost-operator/status "Docker Repository on Quay")](https://quay.io/repository/dmlabs/rkm-outpost-operator)  
-
 # RKM - Remote Kubernetes Monitoring
 Simple monitoring tool for local and remote Kubernetes clusters.  
 Used technonlogies:

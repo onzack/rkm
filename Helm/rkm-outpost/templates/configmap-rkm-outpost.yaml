@@ -6,6 +6,6 @@ metadata:
 data:
   TZ: {{ .Values.clusterInformation.tz }}
   CLUSTER_NAME: {{ .Values.clusterInformation.clusterName }}
-  INFLUXDB_URL: {{ .Values.sentryMissionControl.influxDBUrl | quote }}
-  INFLUXDB_PORT: {{ .Values.sentryMissionControl.influxDBPort | quote }}
-  INFLUXDB_NAME: {{ .Values.sentryMissionControl.influxDBName }}
+  INFLUXDB_URL: {{ .Values.rkmMissionControl.influxDBUrl | quote }}
+  INFLUXDB_PORT: {{ .Values.rkmMissionControl.influxDBPort | quote }}
+  INFLUXDB_NAME: {{ .Values.rkmMissionControl.influxDBName }}

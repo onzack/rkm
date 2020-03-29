@@ -14,7 +14,7 @@ clusterInformation:
 
 schedule:
   outpost: "* * * * *"
-  outpostOperator: "* 14 * * 2"
+  outpostOperator: "* 6 * * 2"
 
 rkmMissionControl:
   # InfluxDB URL and InfluxDB Name of the RKM mission control

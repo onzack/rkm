@@ -8,10 +8,9 @@ metadata:
   name: rkm-outpost-operator
 rules:
 - apiGroups:
-  - "extensions"
-  - "apps"
+  - "batch"
   resources:
-  - deployments
+  - cronjobs
   verbs:
   - get
   - patch
