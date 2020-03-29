@@ -1,0 +1,52 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  labels:
+    app: rkm
+    role: outpost-operator
+  name: rkm-outpost-operator
+spec:
+  schedule: {{ .Values.schedule.outpostOperator | quote }}
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  concurrencyPolicy: Replace
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: rkm
+            role: outpost-operator
+        spec:
+          securityContext:
+            runAsUser: 10000
+            runAsGroup: 10000
+            fsGroup: 10000
+          containers:
+          - name: rkm-outpost-operator
+            image: {{ .Values.repository.outpostOperator }}:latest
+            imagePullPolicy: Always
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                memory: "20Mi"
+                cpu: "20m"
+              limits:
+                memory: "50Mi"
+                cpu: "100m"
+            env:
+              - name: TZ
+                valueFrom:
+                  configMapKeyRef:
+                    name: rkm-config
+                    key: TZ
+              - name: REPOSITORY
+                value: {{ .Values.repository.outpost }}
+          restartPolicy: OnFailure
+          serviceAccountName: rkm-outpost-operator

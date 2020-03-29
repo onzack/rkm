@@ -1,19 +1,17 @@
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
   labels:
     app: rkm
-    role: outpost
-  name: rkm-outpost
+    role: outpost-operator
+  name: rkm-outpost-operator
 rules:
 - apiGroups:
-  - ""
+  - "extensions"
+  - "apps"
   resources:
-  - componentstatuses
-  - nodes
-  - endpoints
+  - deployments
   verbs:
   - get
-  - list
-  - watch
+  - patch

@@ -1,3 +1,4 @@
+---
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -6,7 +7,7 @@ metadata:
     role: outpost
   name: rkm-outpost
 spec:
-  schedule: {{ .Values.sentryOutpost.schedule | quote }}
+  schedule: {{ .Values.schedule.outpost | quote }}
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 2
   concurrencyPolicy: Replace
@@ -24,8 +25,8 @@ spec:
             fsGroup: 10000
           containers:
           - name: rkm-outpost
-            image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-            imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+            image: {{ .Values.repository.outpost }}:latest
+            imagePullPolicy: IfNotPresent
             securityContext:
              allowPrivilegeEscalation: false
              #readOnlyRootFilesystem: true
