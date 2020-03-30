@@ -17,11 +17,16 @@ Used technonlogies:
 ## RKM Mission Control
 
 ### Install InfluxDB
-Install InfluxDB with the [InfluxDB Helm Chart](https://github.com/influxdata/helm-charts/tree/master/charts/influxdb)
+The RKM-Outpost metrics are stored in an InfluxDB.  
+If an InfluxDB isn't available yet, install one for example with the [InfluxDB Helm Chart](https://github.com/influxdata/helm-charts/tree/master/charts/influxdb) on Kubernetes.  
+The InfluxDB and RKM-Outpost have a few dependencies:
+1. The InfluxDB must be reachable for RKM-Outpost
+3. An InfluxDB database for the RKM-Outpost metrics, for example "rkm"
+4. User and password for the InfluxDB database
 
 ### Install Grafana
-Install Grafana with the [Grafana Helm Chart](https://github.com/helm/charts/tree/master/stable/grafana)  
-Import the [RKM MIssion Control Dashboard](https://github.com/dmlabs/Sentry/blob/master/Grafana/rkm-mission-control-dashboard.json)
+If Grafana isn't available yet, install one for example with the [Grafana Helm Chart](https://github.com/helm/charts/tree/master/stable/grafana) on Kubernetes. Grafana must have access to the InfluxDB database.  
+Add the InfluxDB database as a datasource to Grafana and import the [RKM Mission Control Dashboard](https://github.com/dmlabs/Sentry/blob/master/Grafana/rkm-mission-control-dashboard.json).
 
 ## RKM Outpost
 Install RKM Outpost Helm Chart:  
@@ -36,6 +41,14 @@ Install RKM Outpost Helm Chart:
 `vim ./custom-values.yaml`
 5. Install Helm Chart:  
 `helm install -f custom-values.yaml -n rkm-outpost rkm-outpost ./rkm/Helm/rkm-outpost`
+
+## Known limitations
+1. If TLS encription is used for the InfluxDB traffic, the certificate must be signed from a well known CA
+2. RKM-Outpost does not work behind an enterprise proxy yet
+
+# Docker repositories
+RKM-Outpost: https://quay.io/repository/dmlabs/rkm-outpost  
+RKM-Outpost operator: https://quay.io/repository/dmlabs/rkm-outpost-operator
 
 # Licence
 Copyright 2020 dmlabs
