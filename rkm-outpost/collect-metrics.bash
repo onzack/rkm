@@ -6,6 +6,7 @@
 # - INFLUXDB_URL
 # - INFLUXDB_PORT
 # - INFLUXDB_NAME
+# - AUTH_ENABLED
 # - INFLUXDB_USER
 # - INFLUXDB_PW
 # - VERBOSE
@@ -47,16 +48,18 @@ if [[ -z $INFLUXDB_NAME ]]
     exit 1
 fi
 
-if [[ -z $INFLUXDB_USER ]]
+if [ $AUTH_ENABLED == "true" ]
   then
-    echo "ERROR - INFLUXDB_USER environment variable is not set" > $ERRORLOGTARGET
-    exit 1
-fi
-
-if [[ -z $INFLUXDB_PW ]]
-  then
-    echo "ERROR - INFLUXDB_PW environment variable is not set" > $ERRORLOGTARGET
-    exit 1
+    if [[ -z $INFLUXDB_USER ]]
+      then
+        echo "ERROR - INFLUXDB_USER environment variable is not set" > $ERRORLOGTARGET
+        exit 1
+    fi
+    if [[ -z $INFLUXDB_PW ]]
+      then
+        echo "ERROR - INFLUXDB_PW environment variable is not set" > $ERRORLOGTARGET
+        exit 1
+    fi
 fi
 
 if [[ -z $VERBOSE ]]
@@ -198,7 +201,12 @@ if [ $VERBOSE == "true" ]
     cat $METRICSFILE > $OKLOGTARGET
 fi
 
-curl -i -XPOST "$INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME&u=$INFLUXDB_USER&p=$INFLUXDB_PW" --data-binary @$METRICSFILE
+if [ $AUTH_ENABLED == "true" ]
+  then
+    curl -i -XPOST "$INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME&u=$INFLUXDB_USER&p=$INFLUXDB_PW" --data-binary @$METRICSFILE
+  else
+    curl -i -XPOST "$INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME" --data-binary @$METRICSFILE  
+fi
 
 if (( $? != "0" ))
   then

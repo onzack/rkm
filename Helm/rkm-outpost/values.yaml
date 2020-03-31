@@ -6,8 +6,8 @@ repository:
   outpost: quay.io/dmlabs/rkm-outpost
   outpostOperator: quay.io/dmlabs/rkm-outpost-operator
 
+# Kubernetes cluster information for RKM to collect the correct metrics
 clusterInformation:
-  # Kubernetes cluster information for RKM to collect the correct metrics
   clusterName: kubernetes-cluster-1
   kubeAPIServerPort: 6443
   tz: Europe/Zurich
@@ -16,10 +16,15 @@ schedule:
   outpost: "* * * * *"
   outpostOperator: "* 6 * * 2"
 
+# InfluxDB configuration for RKM Mission Control
 rkmMissionControl:
-  # InfluxDB URL and InfluxDB Name of the RKM mission control
-  # NOTE: This chart expects InfluxDB with authentication and you need to create a Kubernetes secret with that information
+  authEnabled: true
+  # NOTE: If authEnabled=true, the chart expects InfluxDB with authentication and you need to create a Kubernetes secret with that information
   # -> kubectl create secret generic rkm-secrets --from-literal=INFLUXDB_USER=<user> --from-literal=INFLUXDB_PW=<password> -n <rkm-namespace>
   influxDBUrl: http://influxdb.example.com
   influxDBPort: 80
   influxDBName: rkm
+
+# The proxy configuratoin
+httpProxy:
+httpsProxy:

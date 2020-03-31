@@ -59,6 +59,9 @@ spec:
                   configMapKeyRef:
                     name: rkm-config
                     key: INFLUXDB_NAME
+              {{- if .Values.rkmMissionControl.authEnabled }}
+              - name: AUTH_ENABLED
+                value: "true"
               - name: INFLUXDB_USER
                 valueFrom:
                   secretKeyRef:
@@ -69,8 +72,17 @@ spec:
                   secretKeyRef:
                     name: rkm-secrets
                     key: INFLUXDB_PW
+              {{- end }}
               - name: VERBOSE
                 value: "false"
+              {{- if .Values.httpProxy }}
+              - name: HTTP_PROXY
+                value: {{ .Values.httpProxy }}
+              {{- end }}
+              {{- if .Values.httpsProxy }}
+              - name: HTTPS_PROXY
+                value: {{ .Values.httpsProxy }}
+              {{- end }}
             resources:
               requests:
                 memory: "45Mi"
