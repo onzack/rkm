@@ -7,7 +7,7 @@ repository:
 
 operator:
   name: rkm-outpost
-  components: rkm-outpost
+  components: cronjob/rkm-outpost
   repository: quay.io/dmlabs/simple-operator
   schedule: "* 6 * * 2"
 

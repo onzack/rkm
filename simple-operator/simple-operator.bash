@@ -23,7 +23,7 @@ echo "Current tag is: $TAG" > $OKLOGTARGET
 for COMPONENT in $COMPONENTS; do
   # Actual script
   echo "Patching ${COMPONENT} cronJob with current tag" > $OKLOGTARGET
-  $KUBECTL_PATH set -n ${K8S_NAMESPACE} image cronjob/${COMPONENT} ${COMPONENT}=$REPOSITORY:$TAG
+  $KUBECTL_PATH set -n ${K8S_NAMESPACE} image ${COMPONENT} ${COMPONENT/*\//}=$REPOSITORY:$TAG
   if (( $? == "0" ))
     then
       echo "OK - patch successful" > $OKLOGTARGET
