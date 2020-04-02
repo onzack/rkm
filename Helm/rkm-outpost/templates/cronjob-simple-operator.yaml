@@ -3,11 +3,11 @@ apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   labels:
-    app: rkm
-    role: outpost-operator
-  name: rkm-outpost-operator
+    app: {{ .Values.operator.name }}
+    role: {{ .Values.operator.name }}-operator
+  name: {{ .Values.operator.name }}-operator
 spec:
-  schedule: {{ .Values.schedule.outpostOperator | quote }}
+  schedule: {{ .Values.operator.schedule | quote }}
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 2
   concurrencyPolicy: Replace
@@ -16,16 +16,16 @@ spec:
       template:
         metadata:
           labels:
-            app: rkm
-            role: outpost-operator
+            app: {{ .Values.operator.name }}
+            role: {{ .Values.operator.name }}-operator
         spec:
           securityContext:
             runAsUser: 10000
             runAsGroup: 10000
             fsGroup: 10000
           containers:
-          - name: rkm-outpost-operator
-            image: {{ .Values.repository.outpostOperator }}:latest
+          - name: {{ .Values.operator.name }}-operator
+            image: {{ .Values.operator.repository }}:latest
             imagePullPolicy: Always
             securityContext:
               allowPrivilegeEscalation: false
@@ -42,11 +42,14 @@ spec:
                 cpu: "100m"
             env:
               - name: TZ
-                valueFrom:
-                  configMapKeyRef:
-                    name: rkm-config
-                    key: TZ
+                value: {{ .Values.clusterInformation.tz | default "Europe/Zurich" | quote }}
               - name: REPOSITORY
-                value: {{ .Values.repository.outpost }}
+                value: {{ .Values.repository.{{ .Values.operator.name }} }}
+              - name: K8S_NAMESPACE
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.namespace
+              - name: COMPONENTS
+                value: {{ .Values.operator.components }}
           restartPolicy: OnFailure
-          serviceAccountName: rkm-outpost-operator
+          serviceAccountName: {{ .Values.operator.name }}-operator

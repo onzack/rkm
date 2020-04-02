@@ -4,7 +4,12 @@
 
 repository:
   outpost: quay.io/dmlabs/rkm-outpost
-  outpostOperator: quay.io/dmlabs/rkm-outpost-operator
+
+operator:
+  name: rkm-outpost
+  components: rkm-outpost
+  repository: quay.io/dmlabs/simple-operator
+  schedule: "* 6 * * 2"
 
 clusterInformation:
   # Kubernetes cluster information for RKM to collect the correct metrics
@@ -14,7 +19,6 @@ clusterInformation:
 
 schedule:
   outpost: "* * * * *"
-  outpostOperator: "* 6 * * 2"
 
 rkmMissionControl:
   # InfluxDB URL and InfluxDB Name of the RKM mission control

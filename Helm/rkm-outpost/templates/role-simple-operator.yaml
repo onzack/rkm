@@ -3,9 +3,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    app: rkm
-    role: outpost-operator
-  name: rkm-outpost-operator
+    app: {{ .Values.operator.name }}
+    role: {{ .Values.operator.name }}-operator
+  name: {{ .Values.operator.name }}-operator
 rules:
 - apiGroups:
   - "batch"
