@@ -1,4 +1,4 @@
-FROM ubuntu:19.10
+FROM ubuntu:20.04
 LABEL maintainer="https://github.com/dmlabs"
 RUN groupadd -g 10000 sentry-outpost && useradd -u 10000 -g 10000 -s /bin/bash -m sentry-outpost
 RUN apt-get update && \

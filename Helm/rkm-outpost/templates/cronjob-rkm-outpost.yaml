@@ -83,6 +83,10 @@ spec:
               - name: HTTPS_PROXY
                 value: {{ .Values.httpsProxy }}
               {{- end }}
+              {{- if .Values.customProxyCA }}
+              - name: CURL_CA_BUNDLE
+                value: /etc/ssl/custom-proxy-ca
+              {{- end }}
             resources:
               requests:
                 memory: "45Mi"
@@ -90,5 +94,14 @@ spec:
               limits:
                 memory: "80Mi"
                 cpu: "1000m"
+          {{- if .Values.customProxyCA }}
+            volumeMounts:
+            - mountPath: /etc/ssl/custom-proxy-ca
+              name: proxy-ca
+          volumes:
+          - name: rancher-data
+            configMap:
+              name: proxy-ca
+          {{- end }}
           restartPolicy: OnFailure
           serviceAccountName: rkm-outpost

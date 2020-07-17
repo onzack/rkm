@@ -66,7 +66,7 @@ if [ $AUTH_ENABLED == "true" ]
     }
   else
     UPLOAD_TO_RKM_MISSION_CONTROL () {
-      curl -i -XPOST "$INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME&u=$INFLUXDB_USER&p=$INFLUXDB_PW" --data-binary @$METRICSFILE
+      curl -i -XPOST "$INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME" --data-binary @$METRICSFILE
     }
 fi
 

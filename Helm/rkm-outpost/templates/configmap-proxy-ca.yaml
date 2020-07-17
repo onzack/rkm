@@ -1,0 +1,8 @@
+{{- if .Values.customProxyCA }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proxy-ca
+data:
+{{ (.Files.Glob "custom/proxy-ca.crt").AsConfig | indent 2 }}
+{{ end }}

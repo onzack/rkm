@@ -2,6 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Docker Image information
 repository:
   outpost: quay.io/dmlabs/rkm-outpost
   outpostOperator: quay.io/dmlabs/rkm-outpost-operator
@@ -12,6 +13,7 @@ clusterInformation:
   kubeAPIServerPort: 6443
   tz: Europe/Zurich
 
+# RKM-Outpost schedules
 schedule:
   outpost: "* * * * *"
   outpostOperator: "* 6 * * 2"
@@ -28,3 +30,6 @@ rkmMissionControl:
 # The proxy configuratoin
 httpProxy:
 httpsProxy:
+customProxyCA: true
+# NOTE: If customProxyCA=true, the chart expects the CA certificate under custom/proxy-ca.crt.
+# A template is already prepared, just past the CA certificate into custom/proxy-ca.crt.
