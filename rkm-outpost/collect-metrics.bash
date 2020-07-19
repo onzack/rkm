@@ -6,6 +6,7 @@
 # - INFLUXDB_URL
 # - INFLUXDB_PORT
 # - INFLUXDB_NAME
+# - AUTH_ENABLED
 # - INFLUXDB_USER
 # - INFLUXDB_PW
 # - VERBOSE
@@ -47,16 +48,26 @@ if [[ -z $INFLUXDB_NAME ]]
     exit 1
 fi
 
-if [[ -z $INFLUXDB_USER ]]
+# Check authentication environment varaibles and define UPLOAD_TO_RKM_MISSION_CONTROL command
+if [ $AUTH_ENABLED == "true" ]
   then
-    echo "ERROR - INFLUXDB_USER environment variable is not set" > $ERRORLOGTARGET
-    exit 1
-fi
-
-if [[ -z $INFLUXDB_PW ]]
-  then
-    echo "ERROR - INFLUXDB_PW environment variable is not set" > $ERRORLOGTARGET
-    exit 1
+    if [[ -z $INFLUXDB_USER ]]
+      then
+        echo "ERROR - INFLUXDB_USER environment variable is not set" > $ERRORLOGTARGET
+        exit 1
+    fi
+    if [[ -z $INFLUXDB_PW ]]
+      then
+        echo "ERROR - INFLUXDB_PW environment variable is not set" > $ERRORLOGTARGET
+        exit 1
+    fi
+    UPLOAD_TO_RKM_MISSION_CONTROL () {
+      curl -i -XPOST "$INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME&u=$INFLUXDB_USER&p=$INFLUXDB_PW" --data-binary @$METRICSFILE
+    }
+  else
+    UPLOAD_TO_RKM_MISSION_CONTROL () {
+      curl -i -XPOST "$INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME" --data-binary @$METRICSFILE
+    }
 fi
 
 if [[ -z $VERBOSE ]]
@@ -107,7 +118,7 @@ fi
 
 echo "OK - preflight checks successful, start collecting metrics" > $OKLOGTARGET
 
-# Actual script
+# Collect metrics
 kubectl get endpoints -n default kubernetes >> /dev/null
 if (( $? != "0" ))
   then
@@ -190,6 +201,7 @@ echo "rkm_apiserver_endpoints_total,cluster=$CLUSTER_NAME value=$ENDPOINTSCOUNT"
 ECHO_OVERALL_STATUS
 ECHO_DURATION
 
+# Upload metrics to RKM Mission Control
 echo "OK - collecting metrics successful, start uploading to RKM mission control: $INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME" > $OKLOGTARGET
 
 if [ $VERBOSE == "true" ]
@@ -198,7 +210,7 @@ if [ $VERBOSE == "true" ]
     cat $METRICSFILE > $OKLOGTARGET
 fi
 
-curl -i -XPOST "$INFLUXDB_URL:$INFLUXDB_PORT/write?db=$INFLUXDB_NAME&u=$INFLUXDB_USER&p=$INFLUXDB_PW" --data-binary @$METRICSFILE
+UPLOAD_TO_RKM_MISSION_CONTROL
 
 if (( $? != "0" ))
   then
