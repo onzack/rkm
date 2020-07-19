@@ -74,7 +74,7 @@ spec:
                     key: INFLUXDB_PW
               {{- end }}
               - name: VERBOSE
-                value: "false"
+                value: {{ .Values.verbose }}
               {{- if .Values.httpProxy }}
               - name: HTTP_PROXY
                 value: {{ .Values.httpProxy }}
@@ -83,9 +83,9 @@ spec:
               - name: HTTPS_PROXY
                 value: {{ .Values.httpsProxy }}
               {{- end }}
-              {{- if .Values.customProxyCA }}
+              {{- if .Values.customCA }}
               - name: CURL_CA_BUNDLE
-                value: /etc/ssl/custom-proxy-ca
+                value: /etc/ssl/custom-ca
               {{- end }}
             resources:
               requests:
@@ -94,14 +94,14 @@ spec:
               limits:
                 memory: "80Mi"
                 cpu: "1000m"
-          {{- if .Values.customProxyCA }}
+          {{- if .Values.customCA }}
             volumeMounts:
-            - mountPath: /etc/ssl/custom-proxy-ca
-              name: proxy-ca
+            - mountPath: /etc/ssl/custom-ca
+              name: custom-ca
           volumes:
           - name: rancher-data
             configMap:
-              name: proxy-ca
+              name: custom-ca
           {{- end }}
           restartPolicy: OnFailure
           serviceAccountName: rkm-outpost

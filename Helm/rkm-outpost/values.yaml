@@ -27,9 +27,14 @@ rkmMissionControl:
   influxDBPort: 80
   influxDBName: rkm
 
+# Verbose mode prints the metrics to /dev/stdout
+verbose: false
+
 # The proxy configuratoin
 httpProxy:
 httpsProxy:
-customProxyCA: true
-# NOTE: If customProxyCA=true, the chart expects the CA certificate under custom/proxy-ca.crt.
-# A template is already prepared, just past the CA certificate into custom/proxy-ca.crt.
+
+# Custom CA
+customCA: false
+# NOTE: If customCA=true, the chart expects the CA certificate under custom/custom-ca.crt.
+# A template is already prepared, just paste the CA certificate into custom/custom-ca.crt.

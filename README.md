@@ -38,13 +38,11 @@ Install RKM Outpost Helm Chart:
 `git clone https://github.com/dmlabs/rkm.git`
 4. Adjust values.yaml file:  
 `cp ./rkm/Helm/rkm-outpost/values.yaml ./custom-values.yaml`  
-`vim ./custom-values.yaml`
-5. Install Helm Chart:  
-`helm install -f custom-values.yaml -n rkm-outpost rkm-outpost ./rkm/Helm/rkm-outpost`
+`vim ./custom-values.yaml`  
+Take a special look at the proxy and CA configs, if you run RKM-Outpost behind a enterprise proxy or the InfluxDB SSL/TLS certificate is signed by a not well known CA.
 
-## Known limitations
-1. If TLS encription is used for the InfluxDB traffic, the certificate must be signed from a well known CA
-2. RKM-Outpost does not work behind an enterprise proxy yet
+5. Install Helm Chart:  
+`helm install -f custom-values.yaml -n rkm-outpost rkm-outpost ./rkm/Helm/rkm-outpost`  
 
 # Docker repositories
 RKM-Outpost: https://quay.io/repository/dmlabs/rkm-outpost  
