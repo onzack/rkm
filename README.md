@@ -7,10 +7,10 @@ Used technonlogies:
 * Grafana
 
 # Architecture
-![A Sample Graph for visualization ](https://github.com/dmlabs/Sentry/blob/master/Docs/rkm.png)
+![A Sample Graph for visualization ](https://github.com/onzack/rkm/blob/main/Docs/rkm.png)
 
 # Grafana Dashbaord
-![Grafana Dashboard ](https://github.com/dmlabs/Sentry/blob/master/Docs/sentry-grafana.png)
+![Grafana Dashboard ](https://github.com/onzack/rkm/blob/main/Docs/rkm-mission-control.png)
 
 # Installation
 
@@ -35,7 +35,7 @@ Install RKM Outpost Helm Chart:
 2. Create secret for InfluxDB authentication:  
 `kubectl create secret generic rkm-secrets --from-literal=INFLUXDB_USER=<user> --from-literal=INFLUXDB_PW=<password> -n rkm-outpost`
 3. Clone this repository:  
-`git clone https://github.com/dmlabs/rkm.git`
+`git clone https://github.com/onzack/rkm.git`
 4. Adjust values.yaml file:  
 `cp ./rkm/Helm/rkm-outpost/values.yaml ./custom-values.yaml`  
 `vim ./custom-values.yaml`  
@@ -45,11 +45,11 @@ Take a special look at the proxy and CA configs, if you run RKM-Outpost behind a
 `helm install -f custom-values.yaml -n rkm-outpost rkm-outpost ./rkm/Helm/rkm-outpost`  
 
 # Docker repositories
-RKM-Outpost: https://quay.io/repository/dmlabs/rkm-outpost  
-RKM-Outpost operator: https://quay.io/repository/dmlabs/rkm-outpost-operator
+RKM-Outpost: https://quay.io/repository/onzack/rkm-outpost  
+RKM-Outpost operator: https://quay.io/repository/onzack/rkm-outpost-operator
 
 # Licence
-Copyright 2020 dmlabs
+Copyright 2020 ONZACK AG
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -62,4 +62,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-

@@ -4,8 +4,8 @@
 
 # Docker Image information
 repository:
-  outpost: quay.io/dmlabs/rkm-outpost
-  outpostOperator: quay.io/dmlabs/rkm-outpost-operator
+  outpost: quay.io/onzack/rkm-outpost
+  outpostOperator: quay.io/onzack/rkm-outpost-operator
 
 # Kubernetes cluster information for RKM to collect the correct metrics
 clusterInformation:
