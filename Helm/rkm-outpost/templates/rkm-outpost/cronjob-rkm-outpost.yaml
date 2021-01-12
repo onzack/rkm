@@ -75,7 +75,7 @@ spec:
                     key: INFLUXDB_PW
               {{- end }}
               - name: VERBOSE
-                value: {{ .Values.verbose }}
+                value: {{ .Values.verbose | quote }}
               {{- if .Values.httpProxy }}
               - name: HTTP_PROXY
                 value: {{ .Values.httpProxy }}
