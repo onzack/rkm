@@ -1,22 +1,12 @@
-# Default values for RKM.
+# Custom values for RKM.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-
-# Docker Image information
-repository:
-  outpost: quay.io/onzack/rkm-outpost
-  outpostOperator: quay.io/onzack/rkm-outpost-operator
 
 # Kubernetes cluster information for RKM to collect the correct metrics
 clusterInformation:
   clusterName: cluster-1
   kubeAPIServerPort: 6443
   tz: Europe/Zurich
-
-# RKM-Outpost schedules
-schedule:
-  outpost: "* * * * *"
-  outpostOperator: "* 6 * * 2"
 
 # InfluxDB configuration for RKM Mission Control
 rkmMissionControl:

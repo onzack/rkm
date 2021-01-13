@@ -26,7 +26,7 @@ The InfluxDB and RKM-Outpost have a few dependencies:
 
 ### Install Grafana
 If Grafana isn't available yet, install one for example with the [Grafana Helm Chart](https://github.com/helm/charts/tree/master/stable/grafana) on Kubernetes. Grafana must have access to the InfluxDB database.  
-Add the InfluxDB database as a datasource to Grafana and import the [RKM Mission Control Dashboard](https://github.com/dmlabs/Sentry/blob/master/Grafana/rkm-mission-control-dashboard.json).
+Add the InfluxDB database as a datasource to Grafana and import the [RKM Mission Control Dashboard](https://github.com/onzack/rkm/blob/main/Grafana/rkm-mission-control-dashboard.json).
 
 ## RKM Outpost
 Install RKM Outpost Helm Chart:  
@@ -36,10 +36,13 @@ Install RKM Outpost Helm Chart:
 `kubectl create secret generic rkm-secrets --from-literal=INFLUXDB_USER=<user> --from-literal=INFLUXDB_PW=<password> -n rkm-outpost`
 3. Clone this repository:  
 `git clone https://github.com/onzack/rkm.git`
-4. Adjust values.yaml file:  
-`cp ./rkm/Helm/rkm-outpost/values.yaml ./custom-values.yaml`  
-`vim ./custom-values.yaml`  
+4. Create and adjust the custom-values.yaml file for your cluster:  
+`cp ./rkm/custom-values.yaml cluster-1-values.yaml`  
+`vim custom-values.yaml`  
+
+**Importat**
 Take a special look at the proxy and CA configs, if you run RKM-Outpost behind a enterprise proxy or the InfluxDB SSL/TLS certificate is signed by a not well known CA.
+And keep in mind, that the proxy support is early beta and not well tested at the moment.
 
 5. Install Helm Chart:  
 `helm install -f custom-values.yaml -n rkm-outpost rkm-outpost ./rkm/Helm/rkm-outpost`  
