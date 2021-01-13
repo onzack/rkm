@@ -18,14 +18,14 @@ Used technonlogies:
 
 ### Install InfluxDB
 The RKM-Outpost metrics are stored in an InfluxDB.  
-If an InfluxDB isn't available yet, install one for example with the [InfluxDB Helm Chart](https://github.com/influxdata/helm-charts/tree/master/charts/influxdb) on Kubernetes.  
+If you don't already have an InfluxDB, install one for example with the [InfluxDB Helm Chart](https://github.com/influxdata/helm-charts/tree/master/charts/influxdb) on Kubernetes.  
 The InfluxDB and RKM-Outpost have a few dependencies:
 1. The InfluxDB must be reachable for RKM-Outpost
 3. An InfluxDB database for the RKM-Outpost metrics, for example "rkm"
 4. User and password for the InfluxDB database
 
 ### Install Grafana
-If Grafana isn't available yet, install one for example with the [Grafana Helm Chart](https://github.com/helm/charts/tree/master/stable/grafana) on Kubernetes. Grafana must have access to the InfluxDB database.  
+If your don't have a Grafana instance, install one for example with the [Grafana Helm Chart](https://github.com/helm/charts/tree/master/stable/grafana) on Kubernetes. Grafana must have access to the InfluxDB database.  
 Add the InfluxDB database as a datasource to Grafana and import the [RKM Mission Control Dashboard](https://github.com/onzack/rkm/blob/main/Grafana/rkm-mission-control-dashboard.json).
 
 ## RKM Outpost
