@@ -52,7 +52,7 @@ RKM-Outpost: https://quay.io/repository/onzack/rkm-outpost
 RKM-Outpost operator: https://quay.io/repository/onzack/rkm-outpost-operator
 
 # Licence
-Copyright 2020 ONZACK AG
+Copyright 2021 ONZACK AG
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
