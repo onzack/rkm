@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 	"rkm-outpost/internal/config"
-	"rkm-outpost/internal/influxdb"
 	"rkm-outpost/internal/logger"
+	"rkm-outpost/internal/metrics"
 
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -13,16 +13,20 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
+const (
+	rkmNodeConditionTypeHealth string = "rkm_node_conditiontype_health"
+)
+
 type K8sClient struct {
-	config    *config.K8sConfig
-	clientset *kubernetes.Clientset
-	influxDb  influxdb.InfluxSender
-	logger    *logger.Logger
+	config           *config.K8sConfig
+	clientset        *kubernetes.Clientset
+	logger           *logger.Logger
+	metricsCollector *metrics.MetricsCollector
 }
 
-func NewK8sClient(config *config.K8sConfig, influxDb influxdb.InfluxSender, logger *logger.Logger) (*K8sClient, error) {
+func NewK8sClient(config *config.K8sConfig, logger *logger.Logger) (*K8sClient, error) {
 	var err error
-	k8sClient := K8sClient{config: config, influxDb: influxDb, logger: logger}
+	k8sClient := K8sClient{config: config, logger: logger}
 
 	cfg, err := clientcmd.BuildConfigFromFlags("", k8sClient.config.ConfigPath)
 	if err != nil {
@@ -34,7 +38,13 @@ func NewK8sClient(config *config.K8sConfig, influxDb influxdb.InfluxSender, logg
 		return nil, err
 	}
 
+	k8sClient.metricsCollector = &metrics.MetricsCollector{ClusterName: config.ClusterName}
+
 	return &k8sClient, nil
+}
+
+func (k *K8sClient) GetMetrics() *metrics.MetricsCollector {
+	return k.metricsCollector
 }
 
 func (k *K8sClient) GetNodeStatus() {
@@ -58,13 +68,10 @@ func (k *K8sClient) GetNodeStatus() {
 			}
 
 			tags := map[string]string{
-				"clustername": k.config.ClusterName,
-				"node":        n.Name,
-				"condition":   string(c.Type),
+				"condition": string(c.Type),
 			}
 
-			k.influxDb.AddNewPoint("rkm_node_conditiontype_health", tags, status)
+			k.metricsCollector.AddMetricsEntry(rkmNodeConditionTypeHealth, n.Name, tags, status)
 		}
-
 	}
 }

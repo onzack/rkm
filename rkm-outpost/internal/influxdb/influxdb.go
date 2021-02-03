@@ -3,10 +3,15 @@ package influxdb
 import (
 	"rkm-outpost/internal/config"
 	"rkm-outpost/internal/logger"
+	"rkm-outpost/internal/metrics"
 	"time"
 
 	client "github.com/influxdata/influxdb1-client/v2"
 )
+
+type InfluxSender interface {
+	Send(metricsCollector *metrics.MetricsCollector) error
+}
 
 type InfluxDbClient struct {
 	config *config.InfluxConfig
@@ -21,20 +26,7 @@ func NewInfluxDbClient(config *config.InfluxConfig, logger *logger.Logger) *Infl
 	}
 }
 
-func (i *InfluxDbClient) AddNewPoint(measurement string, tags map[string]string, value interface{}) error {
-	fields := map[string]interface{}{
-		"value": value,
-	}
-	pt, err := client.NewPoint(measurement, tags, fields, time.Now())
-	if err != nil {
-		return err
-	}
-	i.points = append(i.points, pt)
-	i.logger.Debug().Msgf("adding point to measurement=%s with tags=%+v and value=%v", measurement, tags, value)
-	return nil
-}
-
-func (i *InfluxDbClient) Send() error {
+func (i *InfluxDbClient) Send(metricsCollector *metrics.MetricsCollector) error {
 	httpConfig := client.HTTPConfig{
 		Addr: i.config.InfluxDbUrl,
 	}
@@ -51,17 +43,30 @@ func (i *InfluxDbClient) Send() error {
 	}
 	defer c.Close()
 
-	bp, err := client.NewBatchPoints(client.BatchPointsConfig{Database: i.config.InfluxDbName, Precision: "s"})
+	bp, err := i.addMetricPoints(metricsCollector)
 	if err != nil {
 		return err
 	}
-	bp.AddPoints(i.points)
 
-	i.logger.Info().Str("influxUrl", i.config.InfluxDbUrl).Int("totalPoints", len(i.points)).Msg("try sending data to influxdb")
+	i.logger.Info().Str("influxUrl", i.config.InfluxDbUrl).Int("totalPoints", len(bp.Points())).Msg("try sending data to influxdb")
 	return c.Write(bp)
 }
 
-type InfluxSender interface {
-	AddNewPoint(measurement string, tags map[string]string, value interface{}) error
-	Send() error
+func (i *InfluxDbClient) addMetricPoints(m *metrics.MetricsCollector) (client.BatchPoints, error) {
+	bp, err := client.NewBatchPoints(client.BatchPointsConfig{Database: i.config.InfluxDbName, Precision: "s"})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, m := range m.MetricPoints {
+		p, err := client.NewPoint(m.Measurement, m.Tags, m.Value, time.Now())
+		if err != nil {
+			i.logger.Error().Err(err).Msg("unable to add point to batchpoint")
+			continue
+		}
+		i.logger.Debug().Msgf("%s", m)
+		bp.AddPoint(p)
+	}
+	bp.AddPoints(i.points)
+	return bp, nil
 }

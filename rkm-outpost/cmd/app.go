@@ -23,7 +23,7 @@ func (a *App) Run() {
 	a.k8sClient.GetNodeStatus()
 
 	// send to influx
-	if err := a.influxClient.Send(); err != nil {
+	if err := a.influxClient.Send(a.k8sClient.GetMetrics()); err != nil {
 		a.logger.Error().Err(err).Msg("error while sending metrics to influx")
 	}
 	a.logger.Info().Msg("data sent to influx")

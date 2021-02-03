@@ -20,7 +20,7 @@ func main() {
 
 	influx := influxdb.NewInfluxDbClient(cfg.InfluxConfig, logger)
 
-	k8sClient, err := k8sclient.NewK8sClient(cfg.K8sConfig, influx, logger)
+	k8sClient, err := k8sclient.NewK8sClient(cfg.K8sConfig, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("error while creating k8s client")
 	}
