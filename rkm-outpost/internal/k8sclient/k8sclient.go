@@ -3,6 +3,8 @@ package k8sclient
 import (
 	"context"
 	"log"
+	"os"
+	"path/filepath"
 	"rkm-outpost/internal/config"
 	"rkm-outpost/internal/logger"
 	"rkm-outpost/internal/metrics"
@@ -10,7 +12,9 @@ import (
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/klog"
 )
 
 const (
@@ -28,9 +32,12 @@ func NewK8sClient(config *config.K8sConfig, logger *logger.Logger) (*K8sClient, 
 	var err error
 	k8sClient := K8sClient{config: config, logger: logger}
 
-	cfg, err := clientcmd.BuildConfigFromFlags("", k8sClient.config.ConfigPath)
+	cfg, err := rest.InClusterConfig()
 	if err != nil {
-		return nil, err
+		cfg, err = clientcmd.BuildConfigFromFlags("", defaultKubeconfig())
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	k8sClient.clientset, err = kubernetes.NewForConfig(cfg)
@@ -74,4 +81,17 @@ func (k *K8sClient) GetNodeStatus() {
 			k.metricsCollector.AddMetricsEntry(rkmNodeConditionTypeHealth, n.Name, tags, status)
 		}
 	}
+}
+
+func defaultKubeconfig() string {
+	fname := os.Getenv("KUBECONFIG")
+	if fname != "" {
+		return fname
+	}
+	home, err := os.UserHomeDir()
+	if err != nil {
+		klog.Warningf("failed to get home directory: %v", err)
+		return ""
+	}
+	return filepath.Join(home, ".kube", "config")
 }

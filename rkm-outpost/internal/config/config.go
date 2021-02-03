@@ -16,7 +16,6 @@ type Config struct {
 
 type K8sConfig struct {
 	ClusterName string `envconfig:"CLUSTER_NAME" default:"k8sdev"`
-	ConfigPath  string `envconfig:"CONFIG_PATH" default:"/Users/andiexer/.kube/config"`
 }
 
 type InfluxConfig struct {
