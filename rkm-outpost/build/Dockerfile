@@ -30,5 +30,5 @@ COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
 COPY --from=builder /rkm-outpost /rkm-outpost
 
-USER appuser:appuser
+USER 10001
 ENTRYPOINT ["./rkm-outpost"]
