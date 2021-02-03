@@ -10,6 +10,7 @@ import (
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
@@ -28,9 +29,12 @@ func NewK8sClient(config *config.K8sConfig, logger *logger.Logger) (*K8sClient, 
 	var err error
 	k8sClient := K8sClient{config: config, logger: logger}
 
-	cfg, err := clientcmd.BuildConfigFromFlags("", k8sClient.config.ConfigPath)
+	cfg, err := rest.InClusterConfig()
 	if err != nil {
-		return nil, err
+		cfg, err = clientcmd.BuildConfigFromFlags("", k8sClient.config.ConfigPath)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	k8sClient.clientset, err = kubernetes.NewForConfig(cfg)
