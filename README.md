@@ -3,6 +3,7 @@ Simple monitoring tool for local and remote Kubernetes clusters.
 Used technonlogies:
 * Docker
 * Bash
+* Go
 * InfluxDB
 * Grafana
 
