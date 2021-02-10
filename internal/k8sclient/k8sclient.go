@@ -20,6 +20,7 @@ import (
 
 const (
 	rkmNodeConditionTypeHealth string = "rkm_node_conditiontype_health"
+	rkmAPIServerEndpointsTotal string = "rkm_apiserver_endpoints_total"
 )
 
 type K8sClient struct {
@@ -79,9 +80,19 @@ func (k *K8sClient) GetNodeStatus() {
 				"condition": string(c.Type),
 			}
 
-			k.metricsCollector.AddMetricsEntry(rkmNodeConditionTypeHealth, n.Name, tags, status)
+			k.metricsCollector.AddNodesMetricsEntry(rkmNodeConditionTypeHealth, n.Name, tags, status)
 		}
 	}
+}
+
+func (k *K8sClient) GetEndpointStatus() {
+	endpoints, err := k.clientset.CoreV1().Endpoints("default").Get(context.Background(), "kubernetes", metav1.GetOptions{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	endpointsCount := len(endpoints.Subsets[0].Addresses)
+
+	k.metricsCollector.AddEndpointsMetricsEntry(rkmAPIServerEndpointsTotal, endpointsCount)
 }
 
 func defaultKubeconfig() string {
