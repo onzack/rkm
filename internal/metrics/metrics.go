@@ -2,11 +2,13 @@ package metrics
 
 import "fmt"
 
-type MetricsCollector struct {
+// Collector struct: contains field for ClusterName and MetricsPoints
+type Collector struct {
 	ClusterName  string
 	MetricPoints []Metrics
 }
 
+// Metrics struct: contains field for Measurement, Tags and
 type Metrics struct {
 	Measurement string
 	Tags        map[string]string
@@ -15,7 +17,7 @@ type Metrics struct {
 
 // AddNodesMetricsEntry will create a basic metrics entry with all the needed fields.
 // Please do not provide node/clustername within the tags; this function will manage this for you
-func (m *MetricsCollector) AddNodesMetricsEntry(measurement string, node string, tags map[string]string, value interface{}) {
+func (m *Collector) AddNodesMetricsEntry(measurement string, node string, tags map[string]string, value interface{}) {
 	tags["node"] = node
 	tags["clustername"] = m.ClusterName
 
@@ -30,7 +32,7 @@ func (m *MetricsCollector) AddNodesMetricsEntry(measurement string, node string,
 
 // AddEndpointsMetricsEntry will create a basic metrics entry with all the needed fields.
 // Please do not provide node/clustername within the tags; this function will manage this for you
-func (m *MetricsCollector) AddEndpointsMetricsEntry(measurement string, value interface{}) {
+func (m *Collector) AddEndpointsMetricsEntry(measurement string, value interface{}) {
 
 	tags := map[string]string{
 		"clustername": m.ClusterName,

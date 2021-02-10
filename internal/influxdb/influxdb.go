@@ -10,16 +10,19 @@ import (
 	client "github.com/influxdata/influxdb1-client/v2"
 )
 
+// InfluxSender is an interface that defindes an send methond
 type InfluxSender interface {
-	Send(metricsCollector *metrics.MetricsCollector) error
+	Send(metricsCollector *metrics.Collector) error
 }
 
+// InfluxDbClient is a struct that contains the following fields: config, logger, points
 type InfluxDbClient struct {
 	config *config.InfluxConfig
 	logger *logger.Logger
 	points []*client.Point
 }
 
+// NewInfluxDbClient is a function that takes some config arguments and returns an new InfluxDB Client
 func NewInfluxDbClient(config *config.InfluxConfig, logger *logger.Logger) *InfluxDbClient {
 	return &InfluxDbClient{
 		config: config,
@@ -27,7 +30,7 @@ func NewInfluxDbClient(config *config.InfluxConfig, logger *logger.Logger) *Infl
 	}
 }
 
-func (i *InfluxDbClient) Send(metricsCollector *metrics.MetricsCollector) error {
+func (i *InfluxDbClient) Send(metricsCollector *metrics.Collector) error {
 	httpConfig := client.HTTPConfig{
 		Addr: i.config.InfluxDbUrl,
 	}
@@ -53,7 +56,7 @@ func (i *InfluxDbClient) Send(metricsCollector *metrics.MetricsCollector) error 
 	return c.Write(bp)
 }
 
-func (i *InfluxDbClient) addMetricPoints(m *metrics.MetricsCollector) (client.BatchPoints, error) {
+func (i *InfluxDbClient) addMetricPoints(m *metrics.Collector) (client.BatchPoints, error) {
 	bp, err := client.NewBatchPoints(client.BatchPointsConfig{Database: i.config.InfluxDbName, Precision: "s"})
 	if err != nil {
 		return nil, err

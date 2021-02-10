@@ -27,7 +27,7 @@ type K8sClient struct {
 	config           *config.K8sConfig
 	clientset        *kubernetes.Clientset
 	logger           *logger.Logger
-	metricsCollector *metrics.MetricsCollector
+	metricsCollector *metrics.Collector
 }
 
 func NewK8sClient(config *config.K8sConfig, logger *logger.Logger) (*K8sClient, error) {
@@ -47,12 +47,12 @@ func NewK8sClient(config *config.K8sConfig, logger *logger.Logger) (*K8sClient, 
 		return nil, err
 	}
 
-	k8sClient.metricsCollector = &metrics.MetricsCollector{ClusterName: config.ClusterName}
+	k8sClient.metricsCollector = &metrics.Collector{ClusterName: config.ClusterName}
 
 	return &k8sClient, nil
 }
 
-func (k *K8sClient) GetMetrics() *metrics.MetricsCollector {
+func (k *K8sClient) GetMetrics() *metrics.Collector {
 	return k.metricsCollector
 }
 
