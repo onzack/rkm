@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"rkm-outpost/internal/influxdb"
-	"rkm-outpost/internal/k8sclient"
-	"rkm-outpost/internal/logger"
+	"github.com/onzack/rkm/internal/k8sclient"
+	"github.com/onzack/rkm/internal/logger"
+	"github.com/onzack/rkm/internal/influxdb"
 )
 
 type App struct {

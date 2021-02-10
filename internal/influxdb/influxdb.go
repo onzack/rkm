@@ -1,10 +1,11 @@
 package influxdb
 
 import (
-	"rkm-outpost/internal/config"
-	"rkm-outpost/internal/logger"
-	"rkm-outpost/internal/metrics"
 	"time"
+
+	"github.com/onzack/rkm/internal/config"
+	"github.com/onzack/rkm/internal/logger"
+	"github.com/onzack/rkm/internal/metrics"
 
 	client "github.com/influxdata/influxdb1-client/v2"
 )

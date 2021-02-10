@@ -1,4 +1,4 @@
-module rkm-outpost
+module github.com/onzack/rkm
 
 go 1.15
 

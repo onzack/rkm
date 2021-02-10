@@ -5,9 +5,10 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"rkm-outpost/internal/config"
-	"rkm-outpost/internal/logger"
-	"rkm-outpost/internal/metrics"
+
+	"github.com/onzack/rkm/internal/config"
+	"github.com/onzack/rkm/internal/logger"
+	"github.com/onzack/rkm/internal/metrics"
 
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

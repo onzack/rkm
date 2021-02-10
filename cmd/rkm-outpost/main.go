@@ -1,11 +1,11 @@
 package main
 
 import (
-	"rkm-outpost/cmd"
-	"rkm-outpost/internal/config"
-	"rkm-outpost/internal/influxdb"
-	"rkm-outpost/internal/k8sclient"
-	"rkm-outpost/internal/logger"
+	"github.com/onzack/rkm/cmd"
+	"github.com/onzack/rkm/internal/config"
+	"github.com/onzack/rkm/internal/influxdb"
+	"github.com/onzack/rkm/internal/k8sclient"
+	"github.com/onzack/rkm/internal/logger"
 
 	"github.com/rs/zerolog/log"
 )
