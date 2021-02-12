@@ -22,7 +22,7 @@ type InfluxConfig struct {
 	InfluxDbUrl  string `envconfig:"INFLUXDB_URL" default:"http://localhost:8087"`
 	InfluxDbName string `envconfig:"INFLUXDB_NAME" default:"rkm-outpost"`
 	InfluxDbUser string `envconfig:"INFLUXDB_USER" default:""`
-	InfluxDbPass string `envconfig:"INFLUXDB_PASS" default:""`
+	InfluxDbPW   string `envconfig:"INFLUXDB_PW" default:""`
 	AuthEnabled  bool   `envconfig:"AUTH_ENABLED" default:"false"`
 }
 
@@ -34,7 +34,7 @@ func LoadConfig() (*Config, error) {
 	}
 
 	if cfg.InfluxConfig.AuthEnabled {
-		if cfg.InfluxConfig.InfluxDbUser == "" || cfg.InfluxConfig.InfluxDbPass == "" {
+		if cfg.InfluxConfig.InfluxDbUser == "" || cfg.InfluxConfig.InfluxDbPW == "" {
 			return nil, ErrAuthDetailsMissing
 		}
 	}

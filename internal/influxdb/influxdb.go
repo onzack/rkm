@@ -38,7 +38,7 @@ func (i *InfluxDbClient) Send(metricsCollector *metrics.Collector) error {
 	if i.config.AuthEnabled {
 		i.logger.Debug().Msg("influx auth enabled, using username password")
 		httpConfig.Username = i.config.InfluxDbUser
-		httpConfig.Password = i.config.InfluxDbPass
+		httpConfig.Password = i.config.InfluxDbPW
 	}
 
 	c, err := client.NewHTTPClient(httpConfig)

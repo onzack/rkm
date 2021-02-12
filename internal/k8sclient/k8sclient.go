@@ -23,6 +23,8 @@ const (
 	rkmNodeConditionTypeHealth     string = "rkm_node_conditiontype_health"
 	rkmAPIServerEndpointsTotal     string = "rkm_apiserver_endpoints_total"
 	rkmComponentHealth             string = "rkm_component_health"
+	rkmKubeAPIServerHealth         string = "rkm_kubeapiserver_health"
+	rkmOverallHealth               string = "rkm_overall_health"
 	rkmOutpostDurationMilliseconds string = "rkm_outpost_duration_milliseconds"
 )
 
@@ -64,12 +66,13 @@ func (k *K8sClient) GetMetrics() *metrics.Collector {
 
 // GetNodeStatus is a method for the K8sClient struct that fetches the node status and calls
 // the AddNodesMetricsEntry method to add the metrics to a MetricsPoint
-func (k *K8sClient) GetNodeStatus() {
+func (k *K8sClient) GetNodeStatus(overallHealth *int, kubeAPIHealth *int) {
 	nodes, err := k.clientset.CoreV1().Nodes().List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		log.Fatal(err)
+	} else {
+		*kubeAPIHealth = 1
 	}
-
 	for _, n := range nodes.Items {
 		status := 0
 		for _, c := range n.Status.Conditions {
@@ -77,10 +80,12 @@ func (k *K8sClient) GetNodeStatus() {
 			case "Ready":
 				if c.Status == v1.ConditionTrue {
 					status = 1
+					*overallHealth = 1
 				}
 			default:
 				if c.Status == v1.ConditionFalse {
 					status = 1
+					*overallHealth = 1
 				}
 			}
 
@@ -95,10 +100,12 @@ func (k *K8sClient) GetNodeStatus() {
 
 // GetEndpointStatus is a method for the K8sClient struct that fetches the endpoints status and calls
 // the AddSimpleMetricsEntry method to add the metrics to a MetricsPoint
-func (k *K8sClient) GetEndpointStatus() {
+func (k *K8sClient) GetEndpointStatus(kubeAPIHealth *int) {
 	endpoints, err := k.clientset.CoreV1().Endpoints("default").Get(context.Background(), "kubernetes", metav1.GetOptions{})
 	if err != nil {
 		log.Fatal(err)
+	} else {
+		*kubeAPIHealth = 1
 	}
 	endpointsCount := len(endpoints.Subsets[0].Addresses)
 	k.metricsCollector.AddSimpleMetricsEntry(rkmAPIServerEndpointsTotal, endpointsCount)
@@ -106,15 +113,18 @@ func (k *K8sClient) GetEndpointStatus() {
 
 // GetComponentStatus is a method for the K8sClient struct that fetches the components status and calls
 // the AddComponentsMetricsEntry method to add the metrics to a MetricsPoint
-func (k *K8sClient) GetComponentStatus() {
+func (k *K8sClient) GetComponentStatus(overallHealth *int, kubeAPIHealth *int) {
 	components, err := k.clientset.CoreV1().ComponentStatuses().List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		log.Fatal(err)
+	} else {
+		*kubeAPIHealth = 1
 	}
 	for _, component := range components.Items {
 		status := 0
 		if component.Conditions[0].Status == "True" {
 			status = 1
+			*overallHealth = 1
 		} else {
 			status = 0
 		}
@@ -123,6 +133,13 @@ func (k *K8sClient) GetComponentStatus() {
 		}
 		k.metricsCollector.AddComponentsMetricsEntry(rkmComponentHealth, tags, status)
 	}
+}
+
+// SetKubeAPIAndOverallHealth is a method for the K8sClient struct that calls
+// the AddSimpleMetricsEntry method to add the metrics to a MetricsPoint
+func (k *K8sClient) SetKubeAPIAndOverallHealth(overallHealth *int, kubeAPIHealth *int) {
+	k.metricsCollector.AddSimpleMetricsEntry(rkmKubeAPIServerHealth, *kubeAPIHealth)
+	k.metricsCollector.AddSimpleMetricsEntry(rkmOverallHealth, *overallHealth)
 }
 
 // StopTimer is a method for the K8sClient struct that calculates the duration of rkm-oupost and calls the

@@ -13,6 +13,8 @@ import (
 
 func main() {
 	StartTime := time.Now()
+	OverallHealth := 0
+	KubeAPIHealth := 0
 	log.Info().Msg("rkm-outpost starting")
 	rkmOutpostConfig, err := config.LoadConfig()
 	if err != nil {
@@ -30,9 +32,10 @@ func main() {
 	log.Info().Msg("read metrics data")
 
 	// k8s client collect metrics
-	k8sClient.GetNodeStatus()
-	k8sClient.GetEndpointStatus()
-	k8sClient.GetComponentStatus()
+	k8sClient.GetNodeStatus(&OverallHealth, &KubeAPIHealth)
+	k8sClient.GetEndpointStatus(&KubeAPIHealth)
+	k8sClient.GetComponentStatus(&OverallHealth, &KubeAPIHealth)
+	k8sClient.SetKubeAPIAndOverallHealth(&OverallHealth, &KubeAPIHealth)
 	k8sClient.StopTimer(StartTime)
 
 	// send to influx
