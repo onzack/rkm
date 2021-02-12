@@ -30,13 +30,27 @@ func (m *Collector) AddNodesMetricsEntry(measurement string, node string, tags m
 	})
 }
 
-// AddEndpointsMetricsEntry will create a basic metrics entry with all the needed fields.
+// AddSimpleMetricsEntry will create a basic metrics entry with all the needed fields.
 // Please do not provide node/clustername within the tags; this function will manage this for you
-func (m *Collector) AddEndpointsMetricsEntry(measurement string, value interface{}) {
+func (m *Collector) AddSimpleMetricsEntry(measurement string, value interface{}) {
 
 	tags := map[string]string{
 		"clustername": m.ClusterName,
 	}
+
+	m.MetricPoints = append(m.MetricPoints, Metrics{
+		Measurement: measurement,
+		Tags:        tags,
+		Value: map[string]interface{}{
+			"value": value,
+		},
+	})
+}
+
+// AddComponentsMetricsEntry will create a basic metrics entry with all the needed fields.
+// Please do not provide node/clustername within the tags; this function will manage this for you
+func (m *Collector) AddComponentsMetricsEntry(measurement string, tags map[string]string, value interface{}) {
+	tags["clustername"] = m.ClusterName
 
 	m.MetricPoints = append(m.MetricPoints, Metrics{
 		Measurement: measurement,

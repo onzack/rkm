@@ -1,12 +1,7 @@
 # build
 FROM golang:alpine as builder
-RUN apk update && apk add --no-cache
-ENV GO111MODULE=on \
-    CGO_ENABLED=0 \
-    GOOS=linux \
-    GOARCH=amd64 \
-    USER=appuser \
-    UID=10001
+ENV USER=rkm-outpost \
+    UID=10000
 
 # See https://stackoverflow.com/a/55757473/12429735RUN 
 RUN adduser \
@@ -18,17 +13,13 @@ RUN adduser \
     --uid "${UID}" \
     "${USER}"
 
-WORKDIR /build
-COPY go.mod .
-COPY go.sum .
-COPY . .
-RUN go build -ldflags="-w -s" -o /rkm-outpost
+COPY ./rkm-outpost /go/bin/rkm-outpost
 
 # final image
 FROM scratch
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
-COPY --from=builder /rkm-outpost /rkm-outpost
+COPY --from=builder /go/bin/rkm-outpost /go/bin/rkm-outpost
 
-USER 10001
-ENTRYPOINT ["./rkm-outpost"]
+USER 10000:10000
+ENTRYPOINT ["/go/bin/rkm-outpost"]

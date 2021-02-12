@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/onzack/rkm/internal/config"
 	"github.com/onzack/rkm/internal/influxdb"
 	"github.com/onzack/rkm/internal/k8sclient"
@@ -10,6 +12,7 @@ import (
 )
 
 func main() {
+	StartTime := time.Now()
 	log.Info().Msg("rkm-outpost starting")
 	rkmOutpostConfig, err := config.LoadConfig()
 	if err != nil {
@@ -26,9 +29,11 @@ func main() {
 
 	log.Info().Msg("read metrics data")
 
-	// k8s client fetch data
+	// k8s client collect metrics
 	k8sClient.GetNodeStatus()
 	k8sClient.GetEndpointStatus()
+	k8sClient.GetComponentStatus()
+	k8sClient.StopTimer(StartTime)
 
 	// send to influx
 	if err := influx.Send(k8sClient.GetMetrics()); err != nil {
