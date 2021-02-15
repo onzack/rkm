@@ -45,7 +45,7 @@ Install RKM Outpost Helm Chart:
 rkm-outpost does not have proxy support yet. We are working on it.
 
 5. Install Helm Chart:  
-`helm install -f custom-values.yaml -n rkm-outpost rkm-outpost ./rkm/Helm/rkm-outpost`  
+`helm install -f custom-values.yaml -n rkm-outpost rkm-outpost ./rkm/deployments/kubernetes/helm/rkm-outpost`  
 
 # Docker repositories
 RKM-Outpost: https://quay.io/repository/onzack/rkm-outpost  
