@@ -70,22 +70,22 @@ func (k *K8sClient) GetNodeStatus(overallHealth *int, kubeAPIHealth *int) {
 	nodes, err := k.clientset.CoreV1().Nodes().List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		log.Fatal(err)
-	} else {
-		*kubeAPIHealth = 1
+		*kubeAPIHealth = 0
+		*overallHealth = 0
 	}
 	for _, n := range nodes.Items {
-		status := 0
+		status := 1
 		for _, c := range n.Status.Conditions {
 			switch c.Type {
 			case "Ready":
-				if c.Status == v1.ConditionTrue {
-					status = 1
-					*overallHealth = 1
+				if c.Status == v1.ConditionFalse || c.Status == v1.ConditionUnknown {
+					status = 0
+					*overallHealth = 0
 				}
 			default:
-				if c.Status == v1.ConditionFalse {
-					status = 1
-					*overallHealth = 1
+				if c.Status == v1.ConditionTrue || c.Status == v1.ConditionUnknown {
+					status = 0
+					*overallHealth = 0
 				}
 			}
 
@@ -104,8 +104,7 @@ func (k *K8sClient) GetEndpointStatus(kubeAPIHealth *int) {
 	endpoints, err := k.clientset.CoreV1().Endpoints("default").Get(context.Background(), "kubernetes", metav1.GetOptions{})
 	if err != nil {
 		log.Fatal(err)
-	} else {
-		*kubeAPIHealth = 1
+		*kubeAPIHealth = 0
 	}
 	endpointsCount := len(endpoints.Subsets[0].Addresses)
 	k.metricsCollector.AddSimpleMetricsEntry(rkmAPIServerEndpointsTotal, endpointsCount)
@@ -117,19 +116,19 @@ func (k *K8sClient) GetComponentStatus(overallHealth *int, kubeAPIHealth *int) {
 	components, err := k.clientset.CoreV1().ComponentStatuses().List(context.Background(), metav1.ListOptions{})
 	if err != nil {
 		log.Fatal(err)
-	} else {
-		*kubeAPIHealth = 1
+		*kubeAPIHealth = 0
+		*overallHealth = 0
 	}
 	for _, component := range components.Items {
-		status := 0
-		if component.Conditions[0].Status == "True" {
-			status = 1
-			*overallHealth = 1
-		} else {
+		status := 1
+		tags := map[string]string{}
+		if component.Conditions[0].Status == "False" {
 			status = 0
-		}
-		tags := map[string]string{
-			"component": string(component.Name),
+			*overallHealth = 0
+			tags["component"] = string(component.Name)
+
+		} else {
+			tags["component"] = string(component.Name)
 		}
 		k.metricsCollector.AddComponentsMetricsEntry(rkmComponentHealth, tags, status)
 	}

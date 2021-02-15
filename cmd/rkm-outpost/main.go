@@ -13,8 +13,8 @@ import (
 
 func main() {
 	StartTime := time.Now()
-	OverallHealth := 0
-	KubeAPIHealth := 0
+	OverallHealth := 1
+	KubeAPIHealth := 1
 	log.Info().Msg("rkm-outpost starting")
 	rkmOutpostConfig, err := config.LoadConfig()
 	if err != nil {
