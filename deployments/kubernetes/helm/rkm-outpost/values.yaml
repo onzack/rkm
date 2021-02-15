@@ -23,18 +23,9 @@ rkmMissionControl:
   authEnabled: true
   # NOTE: If authEnabled=true, the chart expects InfluxDB with authentication and you need to create a Kubernetes secret with that information
   # -> kubectl create secret generic rkm-secrets --from-literal=INFLUXDB_USER=<user> --from-literal=INFLUXDB_PW=<password> -n <rkm-namespace>
-  influxDBUrl: http://influxdb.example.com
+  influxDBURL: http://influxdb.example.com
   influxDBPort: 80
   influxDBName: rkm
 
-# Verbose mode prints the metrics to /dev/stdout
-verbose: false
-
-# The proxy configuratoin
-httpProxy:
-httpsProxy:
-
-# Custom CA
-customCA: false
-# NOTE: If customCA=true, the chart expects the CA certificate under custom/custom-ca.crt.
-# A template is already prepared, just paste the CA certificate into custom/custom-ca.crt.
+# Debug mode prints the metrics to /dev/stdout
+debug: false

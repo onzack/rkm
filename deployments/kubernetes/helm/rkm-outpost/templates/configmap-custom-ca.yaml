@@ -1,8 +1,0 @@
-{{- if .Values.customProxyCA }}
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: custom-ca
-data:
-{{ (.Files.Glob "custom/custom-ca.pem").AsConfig | indent 2 }}
-{{ end }}
