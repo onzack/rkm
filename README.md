@@ -7,7 +7,7 @@ Used technonlogies:
 * Grafana
 
 # Architecture
-![A Sample Graph for visualization ](./docs/rkm.png)
+![A Sample Graph for visualization ](./Docs/rkm.png)
 
 # Grafana Dashbaord
 ![Grafana Dashboard ](https://github.com/onzack/rkm/blob/main/Docs/rkm-mission-control.png)
