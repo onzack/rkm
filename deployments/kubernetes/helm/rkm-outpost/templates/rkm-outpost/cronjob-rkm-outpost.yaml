@@ -30,36 +30,19 @@ spec:
             imagePullPolicy: IfNotPresent
             securityContext:
              allowPrivilegeEscalation: false
-             #readOnlyRootFilesystem: true
+             readOnlyRootFilesystem: true
              capabilities:
                drop:
                 - ALL
             env:
               - name: TZ
-                valueFrom:
-                  configMapKeyRef:
-                    name: rkm-config
-                    key: TZ
+                value: {{ .Values.clusterInformation.tz }}
               - name: CLUSTER_NAME
-                valueFrom:
-                  configMapKeyRef:
-                    name: rkm-config
-                    key: CLUSTER_NAME
+                value: {{ .Values.clusterInformation.clusterName }}
               - name: INFLUXDB_URL
-                valueFrom:
-                  configMapKeyRef:
-                    name: rkm-config
-                    key: INFLUXDB_URL
-              - name: INFLUXDB_PORT
-                valueFrom:
-                  configMapKeyRef:
-                    name: rkm-config
-                    key: INFLUXDB_PORT
+                value: "{{ .Values.rkmMissionControl.influxDBUrl }}:{{ .Values.rkmMissionControl.influxDBPort }}"
               - name: INFLUXDB_NAME
-                valueFrom:
-                  configMapKeyRef:
-                    name: rkm-config
-                    key: INFLUXDB_NAME
+                value: {{ .Values.rkmMissionControl.influxDBName }}
               {{- if .Values.rkmMissionControl.authEnabled }}
               - name: AUTH_ENABLED
                 value: "true"
@@ -74,20 +57,8 @@ spec:
                     name: rkm-secrets
                     key: INFLUXDB_PW
               {{- end }}
-              - name: VERBOSE
-                value: {{ .Values.verbose | quote }}
-              {{- if .Values.httpProxy }}
-              - name: HTTP_PROXY
-                value: {{ .Values.httpProxy }}
-              {{- end }}
-              {{- if .Values.httpsProxy }}
-              - name: HTTPS_PROXY
-                value: {{ .Values.httpsProxy }}
-              {{- end }}
-              {{- if .Values.customCA }}
-              - name: CURL_CA_BUNDLE
-                value: /etc/ssl/custom-ca
-              {{- end }}
+              - name: DEBUG
+                value: {{ .Values.debug | quote }}
             resources:
               requests:
                 memory: "45Mi"
@@ -95,14 +66,5 @@ spec:
               limits:
                 memory: "80Mi"
                 cpu: "1000m"
-          {{- if .Values.customCA }}
-            volumeMounts:
-            - mountPath: /etc/ssl/custom-ca
-              name: custom-ca
-          volumes:
-          - name: rancher-data
-            configMap:
-              name: custom-ca
-          {{- end }}
           restartPolicy: OnFailure
           serviceAccountName: rkm-outpost
